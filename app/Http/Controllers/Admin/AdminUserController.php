@@ -18,7 +18,7 @@ class AdminUserController extends Controller
      */
     public function index()
     {
-        $adminUsers = AdminUser::all();
+        $adminUsers = AdminUser::orderBy('id', 'desc')->get();
         return view('admin.rbac.admin_users.index', compact('adminUsers'));
     }
 
@@ -75,7 +75,9 @@ class AdminUserController extends Controller
      */
     public function edit($id)
     {
-        return view('admin.rbac.admin_users.edit');
+        $roles = Role::all();
+        $adminUser = AdminUser::find($id);
+        return view('admin.rbac.admin_users.edit', compact('roles', 'adminUser'));
     }
 
     /**
@@ -98,6 +100,15 @@ class AdminUserController extends Controller
      */
     public function destroy($id)
     {
-        //
+        DB::beginTransaction();
+        try{
+            AdminUser::destroy($id);
+            AdminUserRole::where('admin_user_id', $id)->delete();
+            echo json_encode(['success' => 1, 'tip' => '已删除！']);
+            DB::commit();
+        } catch (\Exception $e) {
+            echo json_encode(['success' => 0, 'tip' => '删除失败']);
+            DB::rollBack();
+        }
     }
 }

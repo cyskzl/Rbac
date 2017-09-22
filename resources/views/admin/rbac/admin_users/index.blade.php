@@ -58,7 +58,7 @@
                        class="ml-5" style="text-decoration:none">
                         <i class="layui-icon">&#xe642;</i>
                     </a>
-                    <a title="删除" href="javascript:;" onclick="admin_del(this,'1')"
+                    <a title="删除" href="javascript:;" onclick="admin_del(this,'{{$adminUser->id}}')"
                        style="text-decoration:none">
                         <i class="layui-icon">&#xe640;</i>
                     </a>
@@ -74,6 +74,7 @@
 @section('javascript')
     @parent
     <script src="{{asset('adminStyle/js/x-layui.js')}}"></script>
+    <script src="{{asset('adminStyle/js/x-ajax.js')}}"></script>
     <script>
         layui.use(['laydate','element','laypage','layer'], function(){
             $ = layui.jquery;//jquery
@@ -128,38 +129,25 @@
             x_admin_show(title,url,w,h);
         }
 
-        /*停用*/
-        function admin_stop(obj,id){
-            layer.confirm('确认要停用吗？',function(index){
-                //发异步把用户状态进行更改
-                $(obj).parents("tr").find(".td-manage").prepend('<a style="text-decoration:none" onClick="admin_start(this,id)" href="javascript:;" title="启用"><i class="layui-icon">&#xe62f;</i></a>');
-                $(obj).parents("tr").find(".td-status").html('<span class="layui-btn layui-btn-disabled layui-btn-mini">已停用</span>');
-                $(obj).remove();
-                layer.msg('已停用!',{icon: 5,time:1000});
-            });
-        }
-
-        /*启用*/
-        function admin_start(obj,id){
-            layer.confirm('确认要启用吗？',function(index){
-                //发异步把用户状态进行更改
-                $(obj).parents("tr").find(".td-manage").prepend('<a style="text-decoration:none" onClick="admin_stop(this,id)" href="javascript:;" title="停用"><i class="layui-icon">&#xe601;</i></a>');
-                $(obj).parents("tr").find(".td-status").html('<span class="layui-btn layui-btn-normal layui-btn-mini">已启用</span>');
-                $(obj).remove();
-                layer.msg('已启用!',{icon: 6,time:1000});
-            });
-        }
         //编辑
         function admin_edit (title,url,id,w,h) {
             x_admin_show(title,url,w,h);
         }
         /*删除*/
         function admin_del(obj,id){
-            layer.confirm('确认要删除吗？',function(index){
-                //发异步删除数据
-                $(obj).parents("tr").remove();
-                layer.msg('已删除!',{icon:1,time:1000});
-            });
+            var json = {_token:'{{csrf_token()}}'};
+            var url = '{{url('admin/admin_user')}}' + '/' + id;
+            var res = adminAjax(url,json,'delete');
+            console.log(res);
+//            layer.confirm('确认要删除吗？',function(index){
+//                //发异步删除数据
+//                if (res.success == 1) {
+//                    $(obj).parents("tr").remove();
+//                    layer.msg(res.tip,{icon:1,time:1000});
+//                } else {
+//                    layer.msg(res.tip,{icon:1,time:1000});
+//                }
+//            });
         }
     </script>
 @endsection
