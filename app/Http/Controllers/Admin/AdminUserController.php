@@ -93,7 +93,7 @@ class AdminUserController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified resource from storage. //先看看是不是最后一个管理再删除吧！
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
